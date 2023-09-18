@@ -81,9 +81,9 @@
 
                 <!-- 添加资产 -->
                 <form class="my-form">
-                    <input type="text" class="form-control" placeholder="消费名称" />
-                    <input type="text" class="form-control" placeholder="消费价格" />
-                    <button type="button" class="btn btn-primary">添加账单</button>
+                    <input type="text" class="form-control" placeholder="消费名称" v-model.trim='name' />
+                    <input type="text" class="form-control" placeholder="消费价格" v-model.number='price' />
+                    <button type="button" class="btn btn-primary" @click="add">添加账单</button>
                 </form>
 
                 <table class="table table-hover">
@@ -96,7 +96,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(item,index) in list" key="item.id">
+                        <tr v-for="(item,index) in list" :key="item.id">
                             <td>{{index+1}}</td>
                             <td>{{item.name}}</td>
                             <td>{{item.price}}</td>
@@ -134,18 +134,21 @@
             el: '#app',
             data: {
                 list: [],
+                name: '',
+                price: '',
             },
             // 1. 基本渲染 created钩子
             async created() {
-                const res = await axios({
+                // const res = await axios({
 
-                    url: 'https://applet-base-api-t.itheima.net/bill',
-                    params: {
-                        creator: 'mai20230918'
-                    }
-                })
-                console.log(res.data);
-                this.list = res.data.data
+                //     url: 'https://applet-base-api-t.itheima.net/bill',
+                //     params: {
+                //         creator: 'mai20230918'
+                //     }
+                // })
+                // console.log(res.data);
+                // this.list = res.data.data
+                this.getList()
             },
 
             computed: {
@@ -154,12 +157,59 @@
                 }
             },
 
-            // 2. 添加功能
-            
+
+
 
             methods: {
-                del(num) {
+                // 2. 添加功能
+                // 2.1 封装获取列表
+                async getList() {
+                    const res = await axios({
+                        url: 'https://applet-base-api-t.itheima.net/bill',
+                        params: {
+                            creator: 'mai20230918'
+                        }
+                    })
+                    // console.log(res.data);
+                    this.list = res.data.data
+                },
+                // 2.2 添加方法
+                async add() {
+                    if (!this.name) {
+                        alert('请正确填写')
+                        return
+                        
+                    }
+
+                    if (typeof this.price !== 'number') {
+                        alert('请输入数字')
+                        return
+                    }
+
+                    const res = await axios({
+                        method: 'post',
+                        url: 'https://applet-base-api-t.itheima.net/bill',
+                        data: {
+                            creator: 'mai20230918',
+                            name: this.name,
+                            price: this.price
+                        }
+
+                    })
+                    this.getList()
+
+                    this.name=''
+                    this.price=''
+
+
+                },
+
+                // 3 删除
+                async del(num) {
                     // this.list = 
+                    // console.log('del');
+                    const res = await axios.delete(`https://applet-base-api-t.itheima.net/bill/${num}`)
+                    this.getList()
                 }
             }
 
