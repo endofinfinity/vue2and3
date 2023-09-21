@@ -1,6 +1,7 @@
 <template>
   <li>
-    <a href="#">
+    <a href="#"
+       class="base-brand-item">
       <img src="@/assets/images/hot1.png"
            alt="" />
     </a>
@@ -14,7 +15,7 @@ export default {
 </script>
 
 <style>
-.hot .bd li {
+.base-brand-item {
   width: 244px;
   height: 306px;
 }

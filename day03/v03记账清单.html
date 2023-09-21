@@ -1,283 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <!-- CSS only -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    />
     <style>
-        .red {
-            color: red !important;
-        }
+      .red {
+        color: red !important;
+      }
 
-        .search {
-            width: 300px;
-            margin: 20px 0;
-        }
+      .search {
+        width: 300px;
+        margin: 20px 0;
+      }
 
-        .my-form {
-            display: flex;
-            margin: 20px 0;
-        }
+      .my-form {
+        display: flex;
+        margin: 20px 0;
+      }
 
-        .my-form input {
-            flex: 1;
-            margin-right: 20px;
-        }
+      .my-form input {
+        flex: 1;
+        margin-right: 20px;
+      }
 
-        .table> :not(:first-child) {
-            border-top: none;
-        }
+      .table > :not(:first-child) {
+        border-top: none;
+      }
 
+      .contain {
+        display: flex;
+        padding: 10px;
+      }
+
+      .list-box {
+        flex: 1;
+        padding: 0 30px;
+      }
+
+      .list-box a {
+        text-decoration: none;
+      }
+
+      .echarts-box {
+        width: 600px;
+        height: 400px;
+        padding: 30px;
+        margin: 0 auto;
+        border: 1px solid #ccc;
+      }
+
+      tfoot {
+        font-weight: bold;
+      }
+
+      @media screen and (max-width: 1000px) {
         .contain {
-            display: flex;
-            padding: 10px;
+          flex-wrap: wrap;
         }
 
         .list-box {
-            flex: 1;
-            padding: 0 30px;
-        }
-
-        .list-box a {
-            text-decoration: none;
+          width: 100%;
         }
 
         .echarts-box {
-            width: 600px;
-            height: 400px;
-            padding: 30px;
-            margin: 0 auto;
-            border: 1px solid #ccc;
+          margin-top: 30px;
         }
-
-        tfoot {
-            font-weight: bold;
-        }
-
-        @media screen and (max-width: 1000px) {
-            .contain {
-                flex-wrap: wrap;
-            }
-
-            .list-box {
-                width: 100%;
-            }
-
-            .echarts-box {
-                margin-top: 30px;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="app">
-        <div class="contain">
-            <!-- 左侧列表 -->
-            <div class="list-box">
+      <div class="contain">
+        <!-- 左侧列表 -->
+        <div class="list-box">
+          <!-- 添加资产 -->
+          <form class="my-form">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="消费名称"
+              v-model.trim="name"
+            />
+            <input
+              type="text"
+              class="form-control"
+              placeholder="消费价格"
+              v-model.number="price"
+            />
+            <button type="button" class="btn btn-primary" @click="add">
+              添加账单
+            </button>
+          </form>
 
-                <!-- 添加资产 -->
-                <form class="my-form">
-                    <input type="text" class="form-control" placeholder="消费名称" v-model.trim='name' />
-                    <input type="text" class="form-control" placeholder="消费价格" v-model.number='price' />
-                    <button type="button" class="btn btn-primary" @click="add">添加账单</button>
-                </form>
-
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>编号</th>
-                            <th>消费名称</th>
-                            <th>消费价格</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item,index) in list" :key="item.id">
-                            <td>{{index+1}}</td>
-                            <td>{{item.name}}</td>
-                            <td>{{item.price}}</td>
-                            <td><a href="javascript:;" @click="del(item.id)">删除</a></td>
-                        </tr>
-
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4">消费总计： {{totalPrice.toFixed(2)}}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            <!-- 右侧图表 -->
-            <div class="echarts-box" id="main"></div>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>编号</th>
+                <th>消费名称</th>
+                <th>消费价格</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item,index) in list" :key="item.id">
+                <td>{{index+1}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.price}}</td>
+                <td><a href="javascript:;" @click="del(item.id)">删除</a></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4">消费总计： {{totalPrice.toFixed(2)}}</td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
+
+        <!-- 右侧图表 -->
+        <div class="echarts-box" id="main"></div>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        /**
-         * 接口文档地址：
-         * https://www.apifox.cn/apidoc/shared-24459455-ebb1-4fdc-8df8-0aff8dc317a8/api-53371058
-         * 
-         * 功能需求：
-         * 1. 基本渲染
-         * 2. 添加功能
-         * 3. 删除功能
-         * 4. 饼图渲染
-         */
-        const app = new Vue({
-            el: '#app',
-            data: {
-                list: [],
-                name: '',
-                price: '',
+      /**
+       * 接口文档地址：
+       * https://www.apifox.cn/apidoc/shared-24459455-ebb1-4fdc-8df8-0aff8dc317a8/api-53371058
+       *
+       * 功能需求：
+       * 1. 基本渲染
+       * 2. 添加功能
+       * 3. 删除功能
+       * 4. 饼图渲染
+       */
+      const app = new Vue({
+        el: "#app",
+        data: {
+          list: [],
+          name: "",
+          price: "",
+        },
+        // 1. 基本渲染 created钩子
+        async created() {
+          // const res = await axios({
+
+          //     url: 'https://applet-base-api-t.itheima.net/bill',
+          //     params: {
+          //         creator: 'mai20230918'
+          //     }
+          // })
+          // console.log(res.data);
+          // this.list = res.data.data
+          this.getList();
+        },
+
+        computed: {
+          totalPrice() {
+            return this.list.reduce((sum, item) => sum + item.price, 0);
+          },
+        },
+
+        // 4. 饼图渲染 echarts需要操作dom，所以在mounted钩子方法中渲染
+        mounted() {
+          // 获取dom 初始化echarts对象
+          this.pieChart = echarts.init(document.querySelector("#main"));
+          // setOption 图标初始结构
+          this.pieChart.setOption({
+            // 大标题
+            title: {
+              text: "消费账单列表",
+              left: "center",
             },
-            // 1. 基本渲染 created钩子
-            async created() {
-                // const res = await axios({
-
-                //     url: 'https://applet-base-api-t.itheima.net/bill',
-                //     params: {
-                //         creator: 'mai20230918'
-                //     }
-                // })
-                // console.log(res.data);
-                // this.list = res.data.data
-                this.getList()
+            // 提示框
+            tooltip: {
+              trigger: "item",
             },
-
-            computed: {
-                totalPrice() {
-                    return this.list.reduce((sum, item) => sum + item.price, 0)
-                }
+            // 图例
+            legend: {
+              orient: "vertical",
+              left: "left",
             },
-
-
-            // 4. 饼图渲染 echarts需要操作dom，所以在mounted钩子方法中渲染
-            mounted() {
-                // 获取dom 初始化echarts对象
-                this.pieChart = echarts.init(document.querySelector('#main'))
-                // setOption 图标初始结构
-                this.pieChart.setOption({
-                    // 大标题
-                    title: {
-                        text: '消费账单列表',
-                        left: 'center'
-                    },
-                    // 提示框
-                    tooltip: {
-                        trigger: 'item'
-                    },
-                    // 图例
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left'
-                    },
-                    // 数据项
-                    series: [
-                        {
-                            name: '消费账单',
-                            type: 'pie',
-                            radius: '50%', // 半径
-                            data: [
-                                // { value: 1048, name: '球鞋' },
-                                // { value: 735, name: '防晒霜' }
-                            ],
-                            emphasis: {
-                                itemStyle: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                }
-                            }
-                        }
-                    ]
-                })
-
-            },
-
-
-
-
-            methods: {
-                // 2. 添加功能
-                // 2.1 封装获取列表
-
-                async getList() {
-                    const res = await axios({
-                        url: 'https://applet-base-api-t.itheima.net/bill',
-                        params: {
-                            creator: 'mai20230918'
-                        }
-                    })
-                    // console.log(res.data);
-                    this.list = res.data.data
-
-                    // 4.1 获取列表数据后就可以渲染饼图，再次setOption，注意这里添加的变动数据的层级结构保持一致
-                    this.pieChart.setOption({
-                        // 数据项
-                        series: [
-                            {
-                                // data: [
-                                //   { value: 1048, name: '球鞋' },
-                                //   { value: 735, name: '防晒霜' }
-                                // ]
-                                data: this.list.map(item => ({ value: item.price, name: item.name }))
-                            }
-                        ]
-                    })
-
+            // 数据项
+            series: [
+              {
+                name: "消费账单",
+                type: "pie",
+                radius: "50%", // 半径
+                data: [
+                  // { value: 1048, name: '球鞋' },
+                  // { value: 735, name: '防晒霜' }
+                ],
+                emphasis: {
+                  itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: "rgba(0, 0, 0, 0.5)",
+                  },
                 },
+              },
+            ],
+          });
+        },
 
+        methods: {
+          // 2. 添加功能
+          // 2.1 封装获取列表
 
-                // 2.2 添加方法
-                async add() {
-                    if (!this.name) {
-                        alert('请正确填写')
-                        return
+          async getList() {
+            const res = await axios({
+              url: "https://applet-base-api-t.itheima.net/bill",
+              params: {
+                creator: "mai20230918",
+              },
+            });
+            // console.log(res.data);
+            this.list = res.data.data;
 
-                    }
-
-                    if (typeof this.price !== 'number') {
-                        alert('请输入数字')
-                        return
-                    }
-
-                    const res = await axios({
-                        method: 'post',
-                        url: 'https://applet-base-api-t.itheima.net/bill',
-                        data: {
-                            creator: 'mai20230918',
-                            name: this.name,
-                            price: this.price
-                        }
-
-                    })
-                    this.getList()
-
-                    this.name = ''
-                    this.price = ''
-
-
+            // 4.1 获取列表数据后就可以渲染饼图，再次setOption，注意这里添加的变动数据的层级结构保持一致
+            this.pieChart.setOption({
+              // 数据项
+              series: [
+                {
+                  // data: [
+                  //   { value: 1048, name: '球鞋' },
+                  //   { value: 735, name: '防晒霜' }
+                  // ]
+                  data: this.list.map((item) => ({
+                    value: item.price,
+                    name: item.name,
+                  })),
                 },
+              ],
+            });
+          },
 
-                // 3 删除
-                async del(num) {
-                    // this.list = 
-                    // console.log('del');
-                    const res = await axios.delete(`https://applet-base-api-t.itheima.net/bill/${num}`)
-                    this.getList()
-                }
+          // 2.2 添加方法
+          async add() {
+            if (!this.name) {
+              alert("请正确填写");
+              return;
             }
 
+            if (typeof this.price !== "number") {
+              alert("请输入数字");
+              return;
+            }
 
-        })
+            const res = await axios({
+              method: "post",
+              url: "https://applet-base-api-t.itheima.net/bill",
+              data: {
+                creator: "mai20230918",
+                name: this.name,
+                price: this.price,
+              },
+            });
+            this.getList();
+
+            this.name = "";
+            this.price = "";
+          },
+
+          // 3 删除
+          async del(num) {
+            // this.list =
+            // console.log('del');
+            const res = await axios.delete(
+              `https://applet-base-api-t.itheima.net/bill/${num}`
+            );
+            this.getList();
+          },
+        },
+      });
     </script>
-</body>
-
+  </body>
 </html>
