@@ -15,7 +15,7 @@
     <!-- 版权底部 -->
     <XtxFooter></XtxFooter>
   </div>
-</templat>
+</template>
 
 <script>
 import XtxShortCut from './components/XtxShortCut.vue'
@@ -44,5 +44,4 @@ export default {
 </script>
 
 <style>
-
 </style>
