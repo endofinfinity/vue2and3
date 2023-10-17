@@ -1,9 +1,9 @@
 import Vue from 'vue'
-import App from './App.vue'
 import VueRouter from 'vue-router'
-import Find from './views/Find.vue'
-import My from './views/My.vue'
-import Friend from './views/Friend.vue'
+
+import Find from '@/views/Find.vue'
+import My from '@/views/My.vue'
+import Friend from '@/views/Friend.vue'
 
 // 注册vue-router路由
 Vue.use(VueRouter)
@@ -19,8 +19,4 @@ const router = new VueRouter({
   ]
 })
 
-new Vue({
-  render: h => h(App),
-  // 关联路由实例
-  router:router
-}).$mount('#app')
+export default router
