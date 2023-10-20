@@ -8,8 +8,7 @@ Vue.use(VueRouter) // VueRouter插件初始化
 const router = new VueRouter({
   routes: [
     { path: '/home', component: Home },
-		// ?表示可选
-    { path: '/search/:key?', component: Search }
+    { path: '/search', component: Search }
   ]
 })
 
