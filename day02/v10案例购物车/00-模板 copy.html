@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="./css/index.css" />
     <title>购物车</title>
   </head>
-
   <body>
     <div class="app-container" id="app">
       <!-- 顶部banner -->
@@ -36,35 +35,30 @@
             </div>
           </div>
           <!-- 身体 -->
-          <div class="tbody">
-            <div
-              class="tr"
-              :class="{ active:item.isChecked}"
-              v-for="(item,index) in fruitList"
-              :key="item.id"
-            >
+          <div class="tbody" v-for="(item,index) in fruitList" :key="item.id">
+            <div class="tr" :class="{active: item.isChecked}">
               <div class="td">
                 <input type="checkbox" v-model="item.isChecked" />
               </div>
-              <div class="td"><img v-bind:src="item.icon" alt="" /></div>
-              <div class="td">{{ item.price}}</div>
+              <div class="td">
+                <img src="item.icon" alt="" />
+              </div>
+              <div class="td">{{item.price}}</div>
               <div class="td">
                 <div class="my-input-number">
                   <button
                     class="decrease"
-                    @click="decrease(item.id)"
-                    v-bind:disabled="item.num <= 1"
+                    @click="sub(item.id)"
+                    :disabled="item.num<=1"
                   >
                     -
                   </button>
-                  <span class="my-input__inner">{{ item.num}}</span>
-                  <button class="increase" @click="increase(item.id)">+</button>
+                  <span class="my-input__inner">{{item.num}}</span>
+                  <button class="increase" @click="add(item.id)">+</button>
                 </div>
               </div>
               <div class="td">{{item.price * item.num}}</div>
-              <div class="td" v-on:click="del(item.id)">
-                <button>删除</button>
-              </div>
+              <div class="td" @click="del(item.id)"><button>删除</button></div>
             </div>
           </div>
         </div>
@@ -90,7 +84,9 @@
       <!-- 空车 -->
       <div class="empty" v-else>🛒空空如也</div>
     </div>
+    <script src="../vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
     <script>
       const defaultArr = [
         {
@@ -131,62 +127,67 @@
       ];
       const app = new Vue({
         el: "#app",
+
         data: {
           // 水果列表
-          fruitList: JSON.parse(localStorage.getItem("list")) || defaultArr,
+          fruitList:
+            JSON.parse(localStorage.getItem("fruitList")) || defaultArr,
         },
-
-        methods: {
-          del(num) {
-            this.fruitList = this.fruitList.filter((item) => item.id !== num);
-          },
-
-          increase(num) {
-            // 需要根据id查找父级item元素，在借助父级的item.num
-            const fruit = this.fruitList.find((item) => item.id === num);
-            fruit.num++;
-          },
-
-          decrease(num) {
-            const fruit = this.fruitList.find((item) => item.id === num);
-            // if (fruit.num<=1) {
-            //   return
-            // }
-            fruit.num--;
-          },
-        },
-
         computed: {
           isAll: {
             get() {
               return this.fruitList.every((item) => item.isChecked);
             },
-
-            set(value) {
-              this.fruitList.forEach((element) => {
-                element.isChecked = value;
+            set(val) {
+              this.fruitList.forEach((item) => {
+                item.isChecked = val;
               });
             },
           },
-
-          totalCount() {
-            return this.fruitList.reduce((sum, item) => {
+          // 勾选的总价
+          totalPrice() {
+            return this.fruitList.reduce((pre, item) => {
               if (item.isChecked) {
-                return sum + item.num;
+                return pre + item.price * item.num;
               } else {
-                return sum;
+                return pre;
               }
             }, 0);
           },
-
-          totalPrice() {
-            return this.fruitList.reduce((sum, item) => {
+          // 总数量
+          totalCount() {
+            return this.fruitList.reduce((pre, item) => {
               if (item.isChecked) {
-                return sum + item.num * item.price;
+                return pre + item.num;
               } else {
-                return sum;
+                return pre;
               }
             }, 0);
+          },
+        },
+
+        methods: {
+          // 元素删除
+          del(i) {
+            this.fruitList = this.fruitList.filter((item) => item.id !== i);
+          },
+          // 添加
+          add(i) {
+            // const theitem = this.fruitList.find((item) => item.id === i);
+            // theitem.num++;
+            this.fruitList.forEach((element) => {
+              if (element.id === i) {
+                element.num++;
+              }
+            });
+          },
+          // 减少
+          sub(i) {
+            const theitem = this.fruitList.find((item) => item.id === i);
+            // if (theitem.num <= 1) {
+            //   return;
+            // }
+            theitem.num--;
           },
         },
 
@@ -194,8 +195,8 @@
         watch: {
           fruitList: {
             deep: true,
-            handler(new_value) {
-              localStorage.setItem("list", JSON.stringify(new_value));
+            handler(newVal) {
+              localStorage.setItem("fruitList", JSON.stringify(newVal));
             },
           },
         },

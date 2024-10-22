@@ -16,7 +16,13 @@ const router = new VueRouter({
     { path:'/find',component:Find},
     { path:'/my',component:My},
     { path:'/friend',component:Friend},
-  ]
+  ],
+  
+  // link自定义高亮类名
+  // 配置模糊匹配的类名
+  linkActiveClass: 'active', 
+  // 配置精确匹配的类名
+  linkExactActiveClass: 'exact-active' 
 })
 
 export default router
