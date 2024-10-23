@@ -13,40 +13,32 @@
       .red {
         color: red !important;
       }
-
       .search {
         width: 300px;
         margin: 20px 0;
       }
-
       .my-form {
         display: flex;
         margin: 20px 0;
       }
-
       .my-form input {
         flex: 1;
         margin-right: 20px;
       }
-
       .table > :not(:first-child) {
         border-top: none;
       }
-
       .contain {
         display: flex;
         padding: 10px;
       }
-
       .list-box {
         flex: 1;
         padding: 0 30px;
       }
-
       .list-box a {
         text-decoration: none;
       }
-
       .echarts-box {
         width: 600px;
         height: 400px;
@@ -54,27 +46,22 @@
         margin: 0 auto;
         border: 1px solid #ccc;
       }
-
       tfoot {
         font-weight: bold;
       }
-
       @media screen and (max-width: 1000px) {
         .contain {
           flex-wrap: wrap;
         }
-
         .list-box {
           width: 100%;
         }
-
         .echarts-box {
           margin-top: 30px;
         }
       }
     </style>
   </head>
-
   <body>
     <div id="app">
       <div class="contain">
@@ -118,7 +105,7 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="4">消费总计： {{totalPrice.toFixed(2)}}</td>
+                <td colspan="4">消费总计：{{totalPrice}}</td>
               </tr>
             </tfoot>
           </table>
@@ -147,137 +134,127 @@
         data: {
           list: [],
           name: "",
-          price: "",
+          price: 0,
         },
-        // 1. 基本渲染 created钩子
-        created() {
-          // const res = await axios({
-
-          //     url: 'https://applet-base-api-t.itheima.net/bill',
-          //     params: {
-          //         creator: 'mai20230918'
-          //     }
-          // })
-          // console.log(res.data);
-          // this.list = res.data.data
-          this.getList();
-        },
-
         computed: {
           totalPrice() {
             return this.list.reduce((sum, item) => sum + item.price, 0);
           },
         },
-
-        // 4. 饼图渲染 echarts需要操作dom，所以在mounted钩子方法中渲染
+        created() {
+          this.getList();
+        },
         mounted() {
-          // 获取dom 初始化echarts对象
-          this.pieChart = echarts.init(document.querySelector("#main"));
-          // setOption 图标初始结构
-          this.pieChart.setOption({
-            // 大标题
+          // 基于准备好的dom，初始化echarts实例
+          this.myChart = echarts.init(document.getElementById("main"));
+
+          // 指定图表的配置项和数据
+          var option = {
             title: {
-              text: "消费账单列表",
-              left: "center",
+              text: "占比图",
             },
-            // 提示框
             tooltip: {
               trigger: "item",
             },
-            // 图例
             legend: {
-              orient: "vertical",
-              left: "left",
+              top: "5%",
+              left: "center",
             },
-            // 数据项
             series: [
               {
-                name: "消费账单",
+                name: "小黑店铺",
                 type: "pie",
-                radius: "50%", // 半径
-                data: [
-                  // { value: 1048, name: '球鞋' },
-                  // { value: 735, name: '防晒霜' }
-                ],
+                radius: ["40%", "70%"],
+                avoidLabelOverlap: false,
+                itemStyle: {
+                  borderRadius: 10,
+                  borderColor: "#fff",
+                  borderWidth: 2,
+                },
+                label: {
+                  show: false,
+                  position: "center",
+                },
                 emphasis: {
-                  itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: "rgba(0, 0, 0, 0.5)",
+                  label: {
+                    show: true,
+                    fontSize: 40,
+                    fontWeight: "bold",
                   },
                 },
+                labelLine: {
+                  show: false,
+                },
+                data: [
+                  // { value: 1048, name: "Search Engine" },
+                  // { value: 735, name: "Direct" },
+                ],
               },
             ],
-          });
+          };
+
+          // 使用刚指定的配置项和数据显示图表。
+          this.myChart.setOption(option);
         },
-
         methods: {
-          // 2. 添加功能
-          // 2.1 封装获取列表
-
+          // 拉取渲染
           async getList() {
-            const res = await axios({
+            const getListNum = await axios({
+              method: "get",
               url: "https://applet-base-api-t.itheima.net/bill",
               params: {
-                creator: "mai20230918",
+                creator: "mai20241023",
               },
             });
-            // console.log(res.data);
-            this.list = res.data.data;
-
-            // 4.1 获取列表数据后就可以渲染饼图，再次setOption，注意这里添加的变动数据的层级结构保持一致
-            this.pieChart.setOption({
-              // 更新数据项
+            // console.log(getListNum.data.data);
+            this.list = getListNum.data.data;
+            this.myChart.setOption({
+              // 更新数据项,注意数据的层级结构保持一致
               series: [
                 {
-                  // data: [
-                  //   { value: 1048, name: '球鞋' },
-                  //   { value: 735, name: '防晒霜' }
-                  // ]
-                  data: this.list.map((item) => ({
-                    value: item.price,
-                    name: item.name,
-                  })),
+                  data:
+                    // { value: 1048, name: "Search Engine" },
+                    // { value: 735, name: "Direct" },
+                    this.list.map((item) => ({
+                      name: item.name,
+                      value: item.price,
+                    })),
                 },
               ],
             });
           },
 
-          // 2.2 添加方法
+          // 删除
+          async del(id) {
+            await axios
+              .delete(`https://applet-base-api-t.itheima.net/bill/${id}`)
+              .then((res) => {
+                // console.log(res);
+                this.getList();
+              });
+          },
+          // 添加
           async add() {
             if (!this.name) {
               alert("请正确填写");
               return;
             }
-
             if (typeof this.price !== "number") {
               alert("请输入数字");
               return;
             }
-
-            const res = await axios({
+            const addNum = await axios({
               method: "post",
               url: "https://applet-base-api-t.itheima.net/bill",
               data: {
-                creator: "mai20230918",
+                creator: "mai20241023",
                 name: this.name,
                 price: this.price,
               },
             });
             this.getList();
-
             this.name = "";
             this.price = "";
-          },
-
-          // 3 删除
-          async del(num) {
-            // this.list =
-            // console.log('del');
-            const res = await axios.delete(
-              `https://applet-base-api-t.itheima.net/bill/${num}`
-            );
-            this.getList();
           },
         },
       });
