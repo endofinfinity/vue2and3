@@ -1,8 +1,11 @@
 <template>
   <div class="main">
-    <div class="box" v-loading="isLoading">
+    <div class="box"
+         v-loading="isLoading">
       <ul>
-        <li v-for="item in list" :key="item.id" class="news">
+        <li v-for="item in list"
+            :key="item.id"
+            class="news">
           <div class="left">
             <div class="title">{{ item.title }}</div>
             <div class="info">
@@ -12,12 +15,14 @@
           </div>
 
           <div class="right">
-            <img :src="item.img" alt="">
+            <img :src="item.img"
+                 alt="">
           </div>
         </li>
       </ul>
     </div>
-    <div class="box2" v-loading="isLoading2"></div>
+    <div class="box2"
+         v-loading="isLoading2"></div>
   </div>
 </template>
 
