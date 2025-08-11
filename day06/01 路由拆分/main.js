@@ -5,6 +5,6 @@ import router from '@/router/index.js'
 
 new Vue({
   render: h => h(App),
-  // 关联路由实例
+  // 3、关联路由实例
   router:router
 }).$mount('#app')

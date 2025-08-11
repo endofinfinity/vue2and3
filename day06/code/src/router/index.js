@@ -1,22 +1,30 @@
-import Home from '@/views/Home'
-import Search from '@/views/Search'
-import NotFound from '@/views/NotFound'
-
 import Vue from 'vue'
-import VueRouter from 'vue-router'
-Vue.use(VueRouter) // VueRouter插件初始化
-
-
-// 创建了一个路由对象
+import VueRouter from "vue-router";
+import Layout from '@/views/Layout.vue';
+import ArticleDetail from '@/views/ArticleDetail.vue';
+import Article from '@/views/Article.vue';
+import Collect from '@/views/Collect.vue';
+import Like from '@/views/Like.vue';
+import User from '@/views/User.vue';
+// 1、引入组件
+Vue.use(VueRouter)
+// 2、创建路由对象
 const router = new VueRouter({
-	mode:'history',
+	//4、 配置路由路径映射
   routes: [
-		
-		{path:'/',redirect:'/home'},
-    { path: '/home', component: Home },
-		// ?表示可选
-    { path: '/search/:key?', component: Search },
-		{path:'*',component:NotFound},
+		{path: '/',component: Layout,
+		children: [
+			{path: '/Article',component: Article,},
+			{path: '/Collect',component: Collect,},
+			{path: '/Like',component: Like,},
+			{path: '/User',component: User,}
+		]
+		}
+		,
+    {path: '/detail',component: ArticleDetail,},
+		{path:'/',redirect:'/Article'},
+
+    
   ]
 })
 

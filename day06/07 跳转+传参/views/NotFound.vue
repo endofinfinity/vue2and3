@@ -35,8 +35,8 @@
           </div>
           <div class="number">4</div>
         </div>
-        <div class="subtitle">哎呀。请检查地址输入。</div>
         <div class="subtitle"> 404 NOT FOUND </div>
+        <div class="subtitle">无页面，请检查地址栏输入。</div>
 
         <div class="btn">
           <button @click="goHome"

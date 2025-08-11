@@ -16,7 +16,7 @@ export default {
   name: 'MyFriend',
   created () {
     // 在created中，获取路由参数
-    // this.$route.query.参数名 获取
+    // this.$route.params.参数名 获取
     console.log(this.$route.params.key);
   }
 }

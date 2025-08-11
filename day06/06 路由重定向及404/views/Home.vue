@@ -12,11 +12,12 @@
       <router-link to="/search/如何成为前端大牛">如何成为前端大牛</router-link>
     </div>
   </div>
-</template>
+</template>  
 
 <script>
 export default {
-  name: 'FindMusic'
+  name: 'FindMusic',
+
 }
 </script>
 

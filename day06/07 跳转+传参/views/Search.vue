@@ -1,6 +1,8 @@
 <template>
   <div class="search">
-    <p>搜索关键字: {{ $route.params.key }} </p>
+    <p>搜索关键字-?query传参: {{ $route.query.key }} </p>
+    <p>搜索关键字-动态路由传参: {{ $route.params.words }} </p>
+
     <p>搜索结果: </p>
     <ul>
       <li>.............</li>
@@ -16,7 +18,9 @@ export default {
   name: 'MyFriend',
   created () {
     // 在created中，获取路由参数
-    // this.$route.query.参数名 获取
+    // 查询传参query
+    console.log(this.$route.query);
+    // 动态路由传参this.$route.params.参数名 获取
     console.log(this.$route.params.key);
   }
 }

@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="footer_wrap">
+      <!-- 5、组件标记到路由 -->
       <a href="#/find">发现音乐</a>
       <a href="#/my">我的音乐</a>
       <a href="#/friend">朋友</a>
